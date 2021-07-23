@@ -1,24 +1,24 @@
-# README
+# Testing ActiveRecord::Cte
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+ 1. `bundle`
+ 2. `rails db:seed` to create 4 posts, 3 of which have `comments_count` OR `tags_count` of more than 0.
+ 3. In `rails console`,
 
-Things you may want to cover:
+    ```ruby
+    Post.where.not(comments_count: ..0).
+      or(Post.where.not(tags_count: ..0)).
+      count
+    ```
 
-* Ruby version
+    correctly returns `3`.
+ 4. The example from [the documentation](https://github.com/vlado/activerecord-cte#activerecordcte),
 
-* System dependencies
+    ```ruby
+    Post.with(
+      posts_with_comments: Post.where("comments_count > ?", 0),
+      posts_with_tags: Post.where("tags_count > ?", 0)
+    ).
+    count
+    ```
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+    incorrectly returns `4`.
